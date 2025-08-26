@@ -1,95 +1,79 @@
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.io.*;
 
-public class Main {
-		
 
-	private static int[][] house = null;
-    private static boolean[][] visited = null;
-	private static int[] dx = {0,0,-1,1};	
-	private static int[] dy = {-1,1,0,0};
-	
-	
-    private static int cnt = 0, number = 0;
-	private static int nowX, nowY, N;
-	
-	public static void main(String[] args) throws IOException
-	{
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
-		List<Integer> list = new ArrayList<>();
-		
-		N = Integer.parseInt(br.readLine());
-		house = new int[N][N];
-		visited = new boolean[N][N];
-		
-		for(int i=0; i<N; i++)
-		{
-			String str = br.readLine();
-			
-			for(int j=0; j<N; j++)
-			{
-				house[i][j] = Character.getNumericValue(str.charAt(j));
-			}
-		}
-		
-		for(int i=0; i<N; i++)
-		{
-			for(int j=0; j<N; j++)
-			{
-				
-				if(visited[i][j] == false && house[i][j] == 1) {
-					cnt = 0;
-					number++;
-					dfs(i,j);
-					list.add(cnt);
-				}
-			}
-		}
-		
-		Collections.sort(list);
-		bw.append(number+"\n");
-		for(int num : list)
-		{
-			bw.append(num+"\n");
-		}
-		
-		br.close();
-		bw.flush();
-		bw.close();
-	}
-	
-	private static void dfs(int x, int y)
-	{	
-		visited[x][y] = true;
-		house[x][y] = number;
-		cnt++;
-		
-		for(int i=0; i<4; i++)
-		{
-			nowX = dx[i] + x;
-			nowY = dy[i] + y;
-			
-			if(Range_check() && visited[nowX][nowY] == false && house[nowX][nowY] == 1)
-			{
-				visited[nowX][nowY] = true;
-				house[nowX][nowY] = number;
-				
-				dfs(nowX,nowY);
-			}
-			
-		}
-		
-	}
-	
-	static boolean Range_check() {
-		return (nowX >= 0 && nowX < N && nowY >= 0 && nowY < N);
-	}
-	
+public class Main{
+    
+    private static char[][] board;
+    private static boolean[][] visited;
+    private static int[] dx = {1,-1,0,0};
+    private static int[] dy = {0,0,1,-1};
+    private static int cnt;
+    private static int N;
+
+     public static void main(String []args) throws IOException{
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+        List<Integer> result= new ArrayList<>();
+        
+        N = Integer.parseInt(br.readLine());
+        
+        board = new char[N][N];
+        visited = new boolean[N][N];
+        
+        for(int i=0; i<N; i++)
+        {
+            String input = br.readLine();
+            
+            for(int j=0; j<N; j++)
+            {
+                char c = input.charAt(j);
+                board[i][j] = c;
+            }
+        }
+        
+        for(int i=0; i<N; i++)
+        {
+            for(int j=0; j<N; j++)
+            {
+                if(board[i][j] == '1' && !visited[i][j])
+                {
+                    cnt = 1;
+                    visited[i][j] = true;
+                    dfs(i,j);
+                    result.add(cnt);
+                }
+            }
+        }
+        
+        Collections.sort(result);
+        bw.write(Integer.toString(result.size())+"\n");
+        for(int r : result)
+        {
+            bw.write(Integer.toString(r)+"\n");
+        }
+        
+        br.close();
+        bw.close();
+     }
+     
+     private static void dfs(int x, int y)
+     {
+         for(int i=0; i<4; i++)
+         {
+            int nx = x + dx[i];
+            int ny = y + dy[i];
+             
+             if(nx < 0 || ny < 0 || nx >= N || ny >= N)
+                continue;
+                
+             if(visited[nx][ny] || board[nx][ny] == '0')
+                continue;
+                
+            visited[nx][ny] = true;
+            cnt++;
+            dfs(nx,ny);
+         }
+     }
+     
 }
